@@ -4,7 +4,7 @@ MidiMixController.shift = false;
 
 MidiMixController.init = function (id, debugging) {
     // flash all LEDs
-    this.value = 1;
+    this.value = 0;
     
     function flashyOn() {
         midi.sendShortMsg(0x90, this.value, 0x7f);
@@ -30,6 +30,13 @@ MidiMixController.init = function (id, debugging) {
     
     for (var i = 1; i <= 16; ++i) {
         engine.makeConnection("[Sampler" + i + "]", "play", MidiMixController.samplerPlayOutputCallbackFunction);
+    }
+    
+    // Turn all the effects units in the rack on
+    for (var i = 1; i <= 4; ++i) {
+        for (var j = 1; j <= 3; ++j) {
+            engine.setValue("[EffectRack1_EffectUnit"+i+"_Effect"+j+"]", "enabled", 1);
+        }
     }
     
     engine.makeConnection("[Channel1]", "play", MidiMixController.channelPlayOutputCallbackFunction);
